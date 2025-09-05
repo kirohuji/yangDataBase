@@ -1,0 +1,41 @@
+{
+  "name": "data-analysis-platform",
+  "version": "1.0.0",
+  "description": "数据分析平台 - 为团队提供交互式数据分析服务",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --parallel --recursive run dev",
+    "build": "pnpm --recursive run build",
+    "start": "pnpm --parallel --recursive run start",
+    "lint": "pnpm --recursive run lint",
+    "test": "pnpm --recursive run test",
+    "clean": "pnpm --recursive run clean && rm -rf node_modules",
+    "docker:build": "docker-compose -f docker/docker-compose.yml build",
+    "docker:up": "docker-compose -f docker/docker-compose.yml up -d",
+    "docker:down": "docker-compose -f docker/docker-compose.yml down",
+    "deploy": "pnpm build && pnpm docker:build && pnpm docker:up"
+  },
+  "keywords": [
+    "data-analysis",
+    "react",
+    "nestjs",
+    "typescript",
+    "mui",
+    "prisma"
+  ],
+  "author": "数据分析团队",
+  "license": "MIT",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.45.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.1.6"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}

@@ -1,0 +1,146 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 用户模型
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  name      String?
+  avatar    String?
+  role      Role     @default(USER)
+  status    UserStatus @default(ACTIVE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 关联关系
+  scripts   Script[]
+  executions ScriptExecution[]
+  files     File[]
+  logs      AuditLog[]
+
+  @@map("users")
+}
+
+// 用户角色枚举
+enum Role {
+  ADMIN
+  USER
+  ANALYST
+}
+
+// 用户状态枚举
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+// 脚本模型
+model Script {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  category    String?
+  scriptPath  String   // 服务器上脚本文件路径
+  configPath  String?  // 配置文件路径
+  parameters  Json?    // 脚本参数定义
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // 关联关系
+  userId      String
+  user        User @relation(fields: [userId], references: [id])
+  executions  ScriptExecution[]
+
+  @@map("scripts")
+}
+
+// 脚本执行记录
+model ScriptExecution {
+  id         String           @id @default(cuid())
+  status     ExecutionStatus  @default(PENDING)
+  parameters Json?            // 执行参数
+  output     String?          // 执行输出
+  error      String?          // 错误信息
+  startTime  DateTime?
+  endTime    DateTime?
+  resultPath String?          // 结果文件路径
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  // 关联关系
+  scriptId   String
+  script     Script @relation(fields: [scriptId], references: [id])
+  userId     String
+  user       User   @relation(fields: [userId], references: [id])
+
+  @@map("script_executions")
+}
+
+// 执行状态枚举
+enum ExecutionStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+// 文件模型
+model File {
+  id        String   @id @default(cuid())
+  filename  String
+  originalName String
+  mimetype  String
+  size      Int
+  path      String   // 文件存储路径
+  category  FileCategory @default(DATA)
+  isPublic  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 关联关系
+  userId    String
+  user      User @relation(fields: [userId], references: [id])
+
+  @@map("files")
+}
+
+// 文件分类枚举
+enum FileCategory {
+  DATA      // 数据文件
+  RESULT    // 结果文件
+  SCRIPT    // 脚本文件
+  CONFIG    // 配置文件
+  OTHER     // 其他文件
+}
+
+// 审计日志模型
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String   // 操作类型
+  resource  String   // 资源类型
+  resourceId String? // 资源ID
+  details   Json?    // 操作详情
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  // 关联关系
+  userId    String?
+  user      User? @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}

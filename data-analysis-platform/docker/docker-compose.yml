@@ -1,0 +1,136 @@
+version: '3.8'
+
+services:
+  # PostgreSQL数据库
+  database:
+    image: postgres:15-alpine
+    container_name: data-analysis-db
+    environment:
+      POSTGRES_DB: data_analysis
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - data-analysis-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Redis缓存
+  redis:
+    image: redis:7-alpine
+    container_name: data-analysis-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - data-analysis-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # 后端API服务
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/backend.Dockerfile
+    container_name: data-analysis-backend
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:postgres123@database:5432/data_analysis
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      JWT_EXPIRES_IN: 7d
+      UPLOAD_PATH: /app/uploads
+      RESULTS_PATH: /app/results
+      SCRIPTS_PATH: /app/scripts
+    ports:
+      - "3000:3000"
+    volumes:
+      - backend_uploads:/app/uploads
+      - backend_results:/app/results
+      - backend_logs:/app/logs
+      # 挂载服务器脚本目录（需要根据实际情况调整）
+      - /path/to/your/scripts:/app/scripts:ro
+    networks:
+      - data-analysis-network
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # 前端Web服务
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/frontend.Dockerfile
+    container_name: data-analysis-frontend
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - data-analysis-network
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Nginx负载均衡器（可选，用于多实例部署）
+  nginx-lb:
+    image: nginx:alpine
+    container_name: data-analysis-nginx-lb
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx-lb.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - data-analysis-network
+    depends_on:
+      - frontend
+      - backend
+    restart: unless-stopped
+    profiles:
+      - loadbalancer
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  backend_uploads:
+    driver: local
+  backend_results:
+    driver: local
+  backend_logs:
+    driver: local
+
+networks:
+  data-analysis-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
