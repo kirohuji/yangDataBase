@@ -1,0 +1,81 @@
+{
+  "navigation": {
+    "home": "Home",
+    "phenotype": "Phenotype",
+    "tools": "Tools",
+    "download": "Download",
+    "about": "About",
+    "search": "Search"
+  },
+  "common": {
+    "welcome": "Welcome",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "submit": "Submit",
+    "reset": "Reset",
+    "clear": "Clear",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "view": "View",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "open": "Open",
+    "language": "Language",
+    "english": "English",
+    "chinese": "中文"
+  },
+  "home": {
+    "title": "Data Analysis Platform",
+    "subtitle": "A comprehensive platform for biological data analysis and visualization",
+    "description": "Explore genomic data, analyze phenotypes, and discover insights with our powerful tools",
+    "getStarted": "Get Started",
+    "learnMore": "Learn More",
+    "features": {
+      "title": "Key Features",
+      "analysis": {
+        "title": "Data Analysis",
+        "description": "Powerful analysis tools for genomic and phenotypic data"
+      },
+      "visualization": {
+        "title": "Data Visualization",
+        "description": "Interactive charts and graphs for data exploration"
+      },
+      "collaboration": {
+        "title": "Team Collaboration",
+        "description": "Share results and collaborate with your research team"
+      }
+    }
+  },
+  "phenotype": {
+    "title": "Phenotype Analysis",
+    "subtitle": "Analyze and explore phenotypic data",
+    "search": "Search Phenotypes",
+    "filter": "Filter",
+    "results": "Results",
+    "noResults": "No results found"
+  },
+  "tools": {
+    "title": "Analysis Tools",
+    "subtitle": "Comprehensive suite of data analysis tools",
+    "categories": {
+      "genomic": "Genomic Analysis",
+      "phenotypic": "Phenotypic Analysis",
+      "statistical": "Statistical Analysis",
+      "visualization": "Data Visualization"
+    }
+  },
+  "download": {
+    "title": "Downloads",
+    "subtitle": "Download datasets and analysis results",
+    "datasets": "Datasets",
+    "results": "Analysis Results",
+    "documentation": "Documentation",
+    "downloadBtn": "Download"
+  }
+}

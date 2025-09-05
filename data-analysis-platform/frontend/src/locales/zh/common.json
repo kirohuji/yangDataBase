@@ -1,0 +1,81 @@
+{
+  "navigation": {
+    "home": "首页",
+    "phenotype": "表型分析",
+    "tools": "分析工具",
+    "download": "下载",
+    "about": "关于",
+    "search": "搜索"
+  },
+  "common": {
+    "welcome": "欢迎",
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "cancel": "取消",
+    "confirm": "确认",
+    "submit": "提交",
+    "reset": "重置",
+    "clear": "清空",
+    "save": "保存",
+    "edit": "编辑",
+    "delete": "删除",
+    "view": "查看",
+    "back": "返回",
+    "next": "下一步",
+    "previous": "上一步",
+    "close": "关闭",
+    "open": "打开",
+    "language": "语言",
+    "english": "English",
+    "chinese": "中文"
+  },
+  "home": {
+    "title": "数据分析平台",
+    "subtitle": "生物数据分析与可视化综合平台",
+    "description": "探索基因组数据，分析表型特征，使用强大工具发现数据洞察",
+    "getStarted": "开始使用",
+    "learnMore": "了解更多",
+    "features": {
+      "title": "核心功能",
+      "analysis": {
+        "title": "数据分析",
+        "description": "强大的基因组和表型数据分析工具"
+      },
+      "visualization": {
+        "title": "数据可视化",
+        "description": "交互式图表和图形，用于数据探索"
+      },
+      "collaboration": {
+        "title": "团队协作",
+        "description": "与研究团队共享结果和协作"
+      }
+    }
+  },
+  "phenotype": {
+    "title": "表型分析",
+    "subtitle": "分析和探索表型数据",
+    "search": "搜索表型",
+    "filter": "筛选",
+    "results": "结果",
+    "noResults": "未找到结果"
+  },
+  "tools": {
+    "title": "分析工具",
+    "subtitle": "全面的数据分析工具套件",
+    "categories": {
+      "genomic": "基因组分析",
+      "phenotypic": "表型分析",
+      "statistical": "统计分析",
+      "visualization": "数据可视化"
+    }
+  },
+  "download": {
+    "title": "下载中心",
+    "subtitle": "下载数据集和分析结果",
+    "datasets": "数据集",
+    "results": "分析结果",
+    "documentation": "文档",
+    "downloadBtn": "下载"
+  }
+}
