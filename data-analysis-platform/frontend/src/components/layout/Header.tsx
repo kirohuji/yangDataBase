@@ -19,6 +19,7 @@ import {
   Language as LanguageIcon,
   Menu as MenuIcon,
 } from '@mui/icons-material';
+import PlantIcon from '@/components/common/PlantIcon';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppStore } from '@/stores/useAppStore';
@@ -90,37 +91,55 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuOpen }) => {
   };
 
   return (
-    <AppBar position="sticky" elevation={0}>
-      <Toolbar sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+    <AppBar 
+      position="sticky" 
+      elevation={0}
+      sx={{
+        backgroundColor: '#4A90A4', // 类似生物数据库的青绿色
+        background: 'linear-gradient(135deg, #4A90A4 0%, #5BA0B4 100%)',
+        minHeight: '70px',
+      }}
+    >
+      <Toolbar sx={{ px: { xs: 2, sm: 3, md: 4 }, minHeight: '70px !important' }}>
         {/* Logo和标题 */}
         <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 0 }}>
-          <Box
-            sx={{
-              width: 40,
-              height: 40,
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, #4CAF50, #2E7D32)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              mr: 2,
-            }}
-          >
-            <ScienceIcon sx={{ color: 'white', fontSize: 24 }} />
+          <PlantIcon 
+            variant="leaf" 
+            sx={{ 
+              fontSize: 40, 
+              mr: 2, 
+              color: '#FFFFFF',
+              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))'
+            }} 
+          />
+          <Box>
+            <Typography
+              variant="h5"
+              component="div"
+              sx={{
+                fontWeight: 600,
+                fontSize: { xs: '1.3rem', sm: '1.5rem', md: '1.75rem' },
+                color: '#FFFFFF',
+                cursor: 'pointer',
+                letterSpacing: 0.5,
+                textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+              }}
+              onClick={() => handleNavigation('/')}
+            >
+              {t('home.title')}
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{
+                color: 'rgba(255,255,255,0.8)',
+                fontSize: '0.75rem',
+                fontStyle: 'italic',
+                display: { xs: 'none', sm: 'block' }
+              }}
+            >
+              {t('home.subtitle')}
+            </Typography>
           </Box>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{
-              fontWeight: 700,
-              fontSize: { xs: '1.1rem', sm: '1.25rem' },
-              color: 'white',
-              cursor: 'pointer',
-            }}
-            onClick={() => handleNavigation('/')}
-          >
-            {t('home.title')}
-          </Typography>
         </Box>
 
         <Box sx={{ flexGrow: 1 }} />

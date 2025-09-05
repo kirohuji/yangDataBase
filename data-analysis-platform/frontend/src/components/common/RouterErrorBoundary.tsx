@@ -1,18 +1,30 @@
 import React from 'react';
 import { Box, Typography, Button, Container } from '@mui/material';
-import { Error as ErrorIcon, Refresh as RefreshIcon } from '@mui/icons-material';
+import { Error as ErrorIcon, Home as HomeIcon } from '@mui/icons-material';
+import { useRouteError, isRouteErrorResponse, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
-interface ErrorBoundaryProps {
-  error?: Error;
-  resetError?: () => void;
-}
+const RouterErrorBoundary: React.FC = () => {
+  const error = useRouteError();
+  const navigate = useNavigate();
+  const { t } = useTranslation();
 
-const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({ error, resetError }) => {
-  const errorMessage = error?.message || 'An unexpected error occurred';
-  const errorStatus = '';
+  let errorMessage = 'An unexpected error occurred';
+  let errorStatus = '';
 
-  const handleRefresh = () => {
-    window.location.reload();
+  if (isRouteErrorResponse(error)) {
+    errorMessage = error.statusText || error.data?.message || 'Page not found';
+    errorStatus = error.status.toString();
+  } else if (error instanceof Error) {
+    errorMessage = error.message;
+  }
+
+  const handleGoHome = () => {
+    navigate('/');
+  };
+
+  const handleGoBack = () => {
+    window.history.back();
   };
 
   return (
@@ -69,19 +81,19 @@ const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({ error, resetError }) => {
         <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
           <Button
             variant="contained"
-            startIcon={<RefreshIcon />}
-            onClick={resetError || handleRefresh}
+            startIcon={<HomeIcon />}
+            onClick={handleGoHome}
             sx={{ px: 3, py: 1 }}
           >
-            {resetError ? 'Try Again' : 'Refresh Page'}
+            {t('navigation.home')}
           </Button>
           
           <Button
             variant="outlined"
-            onClick={() => window.history.back()}
+            onClick={handleGoBack}
             sx={{ px: 3, py: 1 }}
           >
-            Go Back
+            {t('common.back')}
           </Button>
         </Box>
       </Box>
@@ -89,4 +101,4 @@ const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({ error, resetError }) => {
   );
 };
 
-export default ErrorBoundary;
+export default RouterErrorBoundary;
