@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Data Analysis Platform - A comprehensive platform for biological data analysis and visualization" />
+    <meta name="keywords" content="data analysis, bioinformatics, genomics, phenotype, research tools" />
+    <meta name="author" content="Data Analysis Platform Team" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Data Analysis Platform" />
+    <meta property="og:description" content="A comprehensive platform for biological data analysis and visualization" />
+    <meta property="og:image" content="/og-image.png" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content="Data Analysis Platform" />
+    <meta property="twitter:description" content="A comprehensive platform for biological data analysis and visualization" />
+    <meta property="twitter:image" content="/og-image.png" />
+    
+    <!-- Preload critical fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <title>Data Analysis Platform</title>
+    
+    <style>
+      /* 防止FOUC (Flash of Unstyled Content) */
+      html {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        line-height: 1.6;
+      }
+      
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #fafafa;
+        color: #333;
+      }
+      
+      /* 加载动画 */
+      .initial-loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #fafafa;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.3s ease-out;
+      }
+      
+      .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid #e0e0e0;
+        border-top: 3px solid #2e8b57;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 16px;
+      }
+      
+      .loading-text {
+        color: #666;
+        font-size: 14px;
+        font-weight: 500;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      /* 隐藏加载动画 */
+      .initial-loading.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <!-- 初始加载动画 -->
+      <div class="initial-loading" id="initial-loading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading Data Analysis Platform...</div>
+      </div>
+    </div>
+    
+    <script>
+      // 隐藏初始加载动画
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          const loading = document.getElementById('initial-loading');
+          if (loading) {
+            loading.classList.add('hidden');
+            setTimeout(function() {
+              loading.remove();
+            }, 300);
+          }
+        }, 500);
+      });
+    </script>
+    
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

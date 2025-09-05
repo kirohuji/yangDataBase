@@ -21,7 +21,6 @@ import {
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAppStore } from '@/stores/useAppStore';
 
 interface HeaderProps {
   onMobileMenuOpen: () => void;
@@ -34,7 +33,6 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuOpen }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   
-  const { setLanguage } = useAppStore();
   const [languageAnchorEl, setLanguageAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const navigationItems = [
@@ -74,7 +72,6 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuOpen }) => {
 
   const handleLanguageChange = (language: string) => {
     i18n.changeLanguage(language);
-    setLanguage(language as 'en' | 'zh');
     handleLanguageMenuClose();
   };
 
