@@ -123,11 +123,76 @@
     }
   },
   "download": {
-    "title": "下载中心",
-    "subtitle": "下载数据集和分析结果",
+    "title": "数据资料库",
+    "subtitle": "数据集、分析结果与文档的综合资源中心",
     "datasets": "数据集",
-    "results": "分析结果",
-    "documentation": "文档",
-    "downloadBtn": "下载"
+    "results": "分析结果", 
+    "documentation": "文档资料",
+    "myFiles": "我的文件",
+    "publicFiles": "公共资源",
+    "uploadArea": "文件上传区",
+    "downloadBtn": "下载",
+    "uploadBtn": "上传文件",
+    "viewBtn": "预览",
+    "deleteBtn": "删除",
+    "shareBtn": "分享",
+    "filterBtn": "筛选",
+    "searchPlaceholder": "搜索文件名、描述或类型...",
+    "uploadSuccess": "文件上传成功",
+    "downloadSuccess": "文件下载完成",
+    "noFiles": "暂无文件",
+    "fileSize": "文件大小",
+    "fileType": "文件类型",
+    "uploadDate": "上传时间",
+    "downloadCount": "下载次数",
+    "lastUpdated": "最后更新",
+    "categories": {
+      "all": "全部分类",
+      "genome": "基因组数据",
+      "phenotype": "表型数据", 
+      "analysis": "分析结果",
+      "reference": "参考数据",
+      "documentation": "文档资料",
+      "other": "其他文件"
+    },
+    "formats": {
+      "all": "全部格式",
+      "csv": "CSV文件",
+      "xlsx": "Excel文件", 
+      "fasta": "FASTA序列",
+      "vcf": "VCF变异",
+      "gff": "GFF注释",
+      "pdf": "PDF文档",
+      "zip": "压缩包"
+    },
+    "stats": {
+      "totalFiles": "文件总数",
+      "totalSize": "总大小",
+      "totalDownloads": "总下载量",
+      "popularFiles": "热门文件"
+    },
+    "upload": {
+      "dragAndDrop": "拖拽文件到这里或点击上传",
+      "selectFiles": "选择文件",
+      "supportedFormats": "支持的格式",
+      "maxFileSize": "最大文件大小",
+      "category": "文件分类",
+      "description": "文件描述",
+      "isPublic": "公开文件",
+      "uploading": "上传中..."
+    },
+    "details": {
+      "fileName": "文件名",
+      "originalName": "原始文件名",
+      "description": "描述",
+      "category": "分类",
+      "format": "格式",
+      "size": "大小",
+      "uploadedBy": "上传者",
+      "uploadedAt": "上传时间",
+      "downloads": "下载次数",
+      "isPublic": "公开状态",
+      "actions": "操作"
+    }
   }
 }

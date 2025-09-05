@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import ViewSwitcher, { ViewType } from '@/components/common/ViewSwitcher';
 import CompactFilters from '@/components/common/CompactFilters';
 import FileUpload, { ParsedData } from '@/components/common/FileUpload';
+import CandidateLocusForm from '@/sections/phenotype/CandidateLocusForm';
 import PhenotypeChart from '@/sections/phenotype/PhenotypeChart';
 import PhenotypeTable from '@/sections/phenotype/PhenotypeTable';
 import BoardView from '@/sections/phenotype/BoardView';
@@ -40,51 +41,108 @@ const generateMockData = (): PhenotypeData[] => {
 const convertParsedDataToPhenotype = (parsedData: ParsedData): PhenotypeData[] => {
   const { headers, rows } = parsedData;
   
+  // 更强的字段映射规则
+  const fieldMappings = {
+    accession: [
+      'accession', 'accession_id', 'sample_id', 'sample', 'id', 'name',
+      '编号', '样本编号', '品种编号', '材料编号', '样品编号', '序号'
+    ],
+    variety: [
+      'variety', 'cultivar', 'genotype', 'line', 'strain', 'type',
+      '品种', '品种名称', '栽培种', '基因型', '系谱', '类型', '种类'
+    ],
+    location: [
+      'location', 'site', 'place', 'region', 'area', 'field', 'plot',
+      '地点', '位置', '种植地点', '试验地', '田块', '区域', '地区'
+    ],
+    year: [
+      'year', 'season', 'time', 'date',
+      '年份', '年度', '季节', '时间', '日期'
+    ],
+    plantHeight: [
+      'plant_height', 'height', 'plant_h', 'ph',
+      '株高', '植株高度', '高度'
+    ],
+    leafLength: [
+      'leaf_length', 'leaf_l', 'll',
+      '叶长', '叶片长度', '叶长度'
+    ],
+    leafWidth: [
+      'leaf_width', 'leaf_w', 'lw',
+      '叶宽', '叶片宽度', '叶宽度'
+    ],
+    fruitWeight: [
+      'fruit_weight', 'fruit_w', 'fw', 'weight',
+      '果重', '果实重量', '单果重', '重量'
+    ],
+    fruitLength: [
+      'fruit_length', 'fruit_l', 'fl',
+      '果长', '果实长度', '果长度'
+    ],
+    fruitWidth: [
+      'fruit_width', 'fruit_w', 'fruit_diameter',
+      '果宽', '果实宽度', '果径', '果宽度'
+    ],
+    floweringTime: [
+      'flowering_time', 'flowering', 'flower_time', 'ft',
+      '开花期', '开花时间', '花期'
+    ],
+    maturityTime: [
+      'maturity_time', 'maturity', 'mature_time', 'mt',
+      '成熟期', '成熟时间', '熟期'
+    ],
+    yieldPerPlant: [
+      'yield_per_plant', 'yield', 'production', 'ypp',
+      '单株产量', '产量', '单产', '总产量'
+    ],
+    sugarContent: [
+      'sugar_content', 'sugar', 'brix', 'sweetness', 'sc',
+      '糖含量', '含糖量', '糖度', '甜度'
+    ],
+    vitaminC: [
+      'vitamin_c', 'vitc', 'vc', 'ascorbic_acid',
+      '维c含量', '维生素c', 'vc含量', '抗坏血酸'
+    ]
+  };
+
+  // 创建反向映射表
+  const headerToField: { [key: string]: string } = {};
+  Object.entries(fieldMappings).forEach(([field, aliases]) => {
+    aliases.forEach(alias => {
+      headerToField[alias.toLowerCase()] = field;
+    });
+  });
+
+  console.log('原始表头:', headers);
+  console.log('字段映射结果:', headers.map(h => ({
+    原始: h,
+    映射: headerToField[h.toLowerCase()] || '未映射'
+  })));
+  
   return rows.map((row, index) => {
     const item: any = { id: `row-${index + 1}` };
     
     headers.forEach((header, headerIndex) => {
       const value = row[headerIndex];
-      const lowerHeader = header.toLowerCase();
+      const cleanHeader = header.toLowerCase().trim().replace(/\s+/g, '_');
+      const mappedField = headerToField[cleanHeader];
       
-      // 智能映射字段
-      if (lowerHeader.includes('accession') || lowerHeader.includes('编号')) {
-        item.accession = String(value || `Sample-${index + 1}`);
-      } else if (lowerHeader.includes('variety') || lowerHeader.includes('品种')) {
-        item.variety = String(value || '未知品种');
-      } else if (lowerHeader.includes('location') || lowerHeader.includes('地点')) {
-        item.location = String(value || '未知地点');
-      } else if (lowerHeader.includes('year') || lowerHeader.includes('年份')) {
-        item.year = Number(value) || new Date().getFullYear();
-      } else if (lowerHeader.includes('height') || lowerHeader.includes('株高')) {
-        item.plantHeight = Number(value) || 0;
-      } else if (lowerHeader.includes('leaf') && lowerHeader.includes('length')) {
-        item.leafLength = Number(value) || 0;
-      } else if (lowerHeader.includes('leaf') && lowerHeader.includes('width')) {
-        item.leafWidth = Number(value) || 0;
-      } else if (lowerHeader.includes('fruit') && lowerHeader.includes('weight')) {
-        item.fruitWeight = Number(value) || 0;
-      } else if (lowerHeader.includes('fruit') && lowerHeader.includes('length')) {
-        item.fruitLength = Number(value) || 0;
-      } else if (lowerHeader.includes('fruit') && lowerHeader.includes('width')) {
-        item.fruitWidth = Number(value) || 0;
-      } else if (lowerHeader.includes('flowering') || lowerHeader.includes('开花')) {
-        item.floweringTime = Number(value) || 0;
-      } else if (lowerHeader.includes('maturity') || lowerHeader.includes('成熟')) {
-        item.maturityTime = Number(value) || 0;
-      } else if (lowerHeader.includes('yield') || lowerHeader.includes('产量')) {
-        item.yieldPerPlant = Number(value) || 0;
-      } else if (lowerHeader.includes('sugar') || lowerHeader.includes('糖')) {
-        item.sugarContent = Number(value) || 0;
-      } else if (lowerHeader.includes('vitamin') || lowerHeader.includes('维')) {
-        item.vitaminC = Number(value) || 0;
+      if (mappedField) {
+        // 根据字段类型进行适当的转换
+        if (['year', 'plantHeight', 'leafLength', 'leafWidth', 'fruitWeight', 
+             'fruitLength', 'fruitWidth', 'floweringTime', 'maturityTime', 
+             'yieldPerPlant', 'sugarContent', 'vitaminC'].includes(mappedField)) {
+          item[mappedField] = value ? Number(value) : 0;
+        } else {
+          item[mappedField] = value ? String(value) : '';
+        }
       } else {
-        // 其他字段保持原样
+        // 保留原始字段名
         item[header] = value;
       }
     });
     
-    // 确保必要字段存在
+    // 确保必要字段存在并提供默认值
     return {
       id: item.id,
       accession: item.accession || `Sample-${index + 1}`,
@@ -118,6 +176,7 @@ const Phenotype: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showUpload, setShowUpload] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const [, setAnalysisParams] = useState<any>({});
 
   // 图表配置
   const chartConfigs: ChartConfig[] = [
@@ -225,6 +284,18 @@ const Phenotype: React.FC = () => {
     }
   };
 
+  // 处理分析参数提交
+  const handleAnalysisSubmit = (params: any) => {
+    setAnalysisParams(params);
+    console.log('分析参数:', params);
+    // 这里可以根据参数调用相应的分析接口
+  };
+
+  // 重置分析参数
+  const handleAnalysisReset = () => {
+    setAnalysisParams({});
+  };
+
   // 处理下载
   const handleDownload = (format: 'csv' | 'xlsx' = 'csv') => {
     const headers = Object.keys(filteredData[0] || {});
@@ -240,6 +311,20 @@ const Phenotype: React.FC = () => {
     link.href = URL.createObjectURL(blob);
     link.download = `phenotype_data_${new Date().toISOString().split('T')[0]}.${format}`;
     link.click();
+  };
+
+  // 根据上传的数据动态生成可用选项
+  const getAvailableOptions = () => {
+    if (data.length === 0) return { variations: [], phenotypes: [], traits: [] };
+    
+    const variations = [...new Set(data.map(item => item.accession))];
+    const phenotypes = [...new Set(data.map(item => item.variety))];
+    const traits = Object.keys(data[0]).filter(key => 
+      typeof data[0][key as keyof PhenotypeData] === 'number' && 
+      !['id', 'year'].includes(key)
+    );
+    
+    return { variations, phenotypes, traits };
   };
 
   // 处理图表导出
@@ -384,6 +469,16 @@ const Phenotype: React.FC = () => {
             </Button>
           </Box>
         </Box>
+      )}
+
+      {/* 分析参数表单 - 当有数据时显示 */}
+      {data.length > 0 && (
+        <CandidateLocusForm
+          onSubmit={handleAnalysisSubmit}
+          onReset={handleAnalysisReset}
+          loading={loading}
+          availableOptions={getAvailableOptions()}
+        />
       )}
 
       {/* 错误提示 */}
