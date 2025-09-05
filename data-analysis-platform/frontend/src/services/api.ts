@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import { useAppStore } from '@/stores/useAppStore';
 
 // API基础配置
@@ -17,7 +17,7 @@ export const apiClient: AxiosInstance = axios.create({
 
 // 请求拦截器
 apiClient.interceptors.request.use(
-  (config: AxiosRequestConfig) => {
+  (config: InternalAxiosRequestConfig) => {
     // 添加认证token
     const token = localStorage.getItem('auth_token');
     if (token && config.headers) {
@@ -103,7 +103,7 @@ apiClient.interceptors.response.use(
           
         case 422:
           // 数据验证失败
-          const validationErrors = data?.errors || [];
+          const validationErrors = (data as any)?.errors || [];
           const errorMessage = validationErrors.length > 0 
             ? validationErrors.map((err: any) => `${err.field}: ${err.message}`).join(', ')
             : 'Validation failed';
@@ -141,7 +141,7 @@ apiClient.interceptors.response.use(
           useAppStore.getState().addNotification({
             type: 'error',
             title: 'Request Failed',
-            message: data?.message || 'An unexpected error occurred.',
+            message: (data as any)?.message || 'An unexpected error occurred.',
           });
       }
     } else {
@@ -205,7 +205,7 @@ export enum HttpMethod {
 }
 
 // 请求配置类型
-export interface RequestConfig extends Omit<AxiosRequestConfig, 'url' | 'method'> {
+export interface RequestConfig extends Omit<InternalAxiosRequestConfig, 'url' | 'method'> {
   skipAuth?: boolean;
   skipErrorHandling?: boolean;
 }
