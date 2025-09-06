@@ -72,7 +72,7 @@ const Home: React.FC = () => {
       title: '表型数据库扩容',
       subtitle: '数据更新',
       description: '新增2024年度表型测量数据，覆盖更多品种和环境条件。',
-      image: 'https://images.unsplash.com/photo-1574126154517-d1e0d89ef734?w=1200&h=600&fit=crop',
+      image: '/images/database.jpg',
       action: {
         text: '探索数据',
         onClick: () => navigate('/phenotype'),
