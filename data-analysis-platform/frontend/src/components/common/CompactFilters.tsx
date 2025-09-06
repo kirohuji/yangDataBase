@@ -16,7 +16,6 @@ import {
   Autocomplete,
 } from '@mui/material';
 import {
-  FilterList as FilterIcon,
   Close as CloseIcon,
   Add as AddIcon,
 } from '@mui/icons-material';
@@ -41,7 +40,7 @@ const CompactFilters: React.FC<CompactFiltersProps> = ({
   onFiltersChange,
   availableFields
 }) => {
-  const { t } = useTranslation();
+  const { } = useTranslation();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [newFilter, setNewFilter] = useState({ field: '', operator: '', value: '' });
 
@@ -239,8 +238,8 @@ const CompactFilters: React.FC<CompactFiltersProps> = ({
                 <Autocomplete
                   size="small"
                   options={selectedField.options || []}
-                  value={newFilter.value}
-                  onChange={(_, value) => setNewFilter({ ...newFilter, value })}
+                  value={newFilter.value || ''}
+                  onChange={(_, value) => setNewFilter({ ...newFilter, value: value ?? '' })}
                   renderInput={(params) => (
                     <TextField {...params} label="值" variant="outlined" />
                   )}

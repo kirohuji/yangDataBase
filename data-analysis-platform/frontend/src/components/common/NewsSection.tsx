@@ -17,7 +17,6 @@ import {
   Visibility as ViewIcon,
   ArrowForward as ArrowIcon,
 } from '@mui/icons-material';
-import { useTranslation } from 'react-i18next';
 
 export interface NewsItem {
   id: string;
@@ -54,7 +53,6 @@ const NewsSection: React.FC<NewsSectionProps> = ({
   onViewAll,
   onNewsClick,
 }) => {
-  const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 

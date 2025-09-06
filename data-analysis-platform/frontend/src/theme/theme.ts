@@ -105,6 +105,7 @@ const baseTheme = {
           fontWeight: 500,
           borderRadius: 6,
           padding: '8px 16px',
+          variants: [],
         },
         contained: {
           boxShadow: '0 2px 8px rgba(0,0,0,0.15)',

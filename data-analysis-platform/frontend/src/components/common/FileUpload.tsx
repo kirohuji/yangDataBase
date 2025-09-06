@@ -5,15 +5,10 @@ import {
   Typography,
   Paper,
   LinearProgress,
-  IconButton,
   Chip,
-  Alert,
 } from '@mui/material';
 import {
   CloudUpload as UploadIcon,
-  Description as FileIcon,
-  Close as CloseIcon,
-  CheckCircle as SuccessIcon,
 } from '@mui/icons-material';
 import * as XLSX from 'xlsx';
 

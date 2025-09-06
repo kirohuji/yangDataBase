@@ -2,10 +2,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { FileService } from '@/services/fileService';
 import { useAppStore } from '@/stores/useAppStore';
 import type { 
-  FileInfo, 
   UploadFileRequest, 
   FileSearchParams,
-  DownloadItem,
   CreateDownloadRequest,
   DownloadSearchParams
 } from '@/types/api';

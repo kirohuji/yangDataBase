@@ -316,7 +316,7 @@ export const useDataStore = create<DataStore>()(
         
         // 应用分类过滤器
         if (searchFilters.category !== 'All') {
-          results = results.filter(item => item.category === searchFilters.category);
+          results = results.filter(item => 'category' in item && item.category === searchFilters.category);
         }
         
         // 应用排序
