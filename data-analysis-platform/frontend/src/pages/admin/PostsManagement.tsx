@@ -49,25 +49,11 @@ import {
   NavigateNext as NavigateNextIcon,
 } from '@mui/icons-material';
 import MarkdownEditor from '@/components/admin/MarkdownEditor';
+import PostsService, { PostMeta, CategoryMeta } from '@/services/postsService';
 
-interface PostItem {
-  id: string;
-  title: string;
-  content: string;
-  category: string;
-  tags: string[];
-  status: 'draft' | 'published';
-  createdAt: string;
-  updatedAt: string;
-  author: string;
-}
-
-interface CategoryItem {
-  id: string;
-  name: string;
-  children?: CategoryItem[];
-  posts?: PostItem[];
-}
+// 使用服务中定义的接口
+type PostItem = PostMeta & { content?: string };
+type CategoryItem = CategoryMeta;
 
 const PostsManagement: React.FC = () => {
   const theme = useTheme();
@@ -80,6 +66,7 @@ const PostsManagement: React.FC = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showCategoryDialog, setShowCategoryDialog] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [contextMenu, setContextMenu] = useState<{
     mouseX: number;
     mouseY: number;
@@ -94,105 +81,31 @@ const PostsManagement: React.FC = () => {
   const [newCategoryName, setNewCategoryName] = useState('');
   const [newCategoryParent, setNewCategoryParent] = useState('');
 
-  // 模拟数据
-  const [categories, setCategories] = useState<CategoryItem[]>([
-    {
-      id: 'research',
-      name: '研究成果',
-      children: [
-        { id: 'papers', name: '学术论文' },
-        { id: 'reports', name: '研究报告' },
-      ],
-    },
-    {
-      id: 'news',
-      name: '新闻动态',
-      children: [
-        { id: 'updates', name: '系统更新' },
-        { id: 'announcements', name: '公告通知' },
-      ],
-    },
-    {
-      id: 'tutorials',
-      name: '教程文档',
-      children: [
-        { id: 'guides', name: '使用指南' },
-        { id: 'api', name: 'API文档' },
-      ],
-    },
-  ]);
+  // 数据状态
+  const [categories, setCategories] = useState<CategoryItem[]>([]);
+  const [posts, setPosts] = useState<PostItem[]>([]);
 
-  const [posts, setPosts] = useState<PostItem[]>([
-    {
-      id: '1',
-      title: 'Yanglab数据库最新研究成果发表',
-      content: `# 研究背景
+  // 加载数据
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        const [categoriesData, postsData] = await Promise.all([
+          PostsService.getCategories(),
+          PostsService.getAllPosts()
+        ]);
+        
+        setCategories(categoriesData);
+        setPosts(postsData);
+      } catch (error) {
+        console.error('Error loading data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-我们的研究团队在植物基因组学领域取得了重要突破...
-
-## 主要发现
-
-1. 发现了新的基因调控机制
-2. 建立了高精度的预测模型
-3. 开发了创新的分析方法
-
-## 研究意义
-
-这项研究对于理解植物生长发育具有重要意义...`,
-      category: 'papers',
-      tags: ['基因组学', '研究成果', 'Nature'],
-      status: 'published',
-      createdAt: '2024-01-15T10:00:00Z',
-      updatedAt: '2024-01-15T10:00:00Z',
-      author: '研究团队',
-    },
-    {
-      id: '2',
-      title: '数据库系统升级公告',
-      content: `# 系统升级通知
-
-为了提供更好的服务，我们将于本周末对数据库系统进行升级...
-
-## 升级内容
-
-- 性能优化
-- 界面改进
-- 新功能上线
-
-## 注意事项
-
-请在升级期间注意保存您的工作...`,
-      category: 'announcements',
-      tags: ['系统升级', '公告'],
-      status: 'published',
-      createdAt: '2024-01-12T15:30:00Z',
-      updatedAt: '2024-01-12T15:30:00Z',
-      author: '技术团队',
-    },
-    {
-      id: '3',
-      title: '新用户使用指南',
-      content: `# 欢迎使用Yanglab数据库
-
-本指南将帮助您快速上手我们的平台...
-
-## 注册账户
-
-1. 点击注册按钮
-2. 填写必要信息
-3. 验证邮箱
-
-## 开始使用
-
-登录后，您可以...`,
-      category: 'guides',
-      tags: ['教程', '新手指南'],
-      status: 'draft',
-      createdAt: '2024-01-10T09:00:00Z',
-      updatedAt: '2024-01-14T16:20:00Z',
-      author: '教育团队',
-    },
-  ]);
+    loadData();
+  }, []);
 
   // 获取分类下的文章
   const getPostsByCategory = (categoryId: string) => {
@@ -216,11 +129,21 @@ const PostsManagement: React.FC = () => {
   };
 
   // 处理文章选择
-  const handlePostSelect = (post: PostItem) => {
-    setSelectedPost(post);
-    setIsEditing(false);
-    if (isMobile) {
-      setMobileDrawerOpen(false);
+  const handlePostSelect = async (post: PostItem) => {
+    try {
+      // 如果文章没有内容，从服务加载
+      if (!post.content) {
+        const content = await PostsService.getPostContent(post.path);
+        post.content = content;
+      }
+      
+      setSelectedPost(post);
+      setIsEditing(false);
+      if (isMobile) {
+        setMobileDrawerOpen(false);
+      }
+    } catch (error) {
+      console.error('Error loading post content:', error);
     }
   };
 
@@ -230,46 +153,63 @@ const PostsManagement: React.FC = () => {
   };
 
   // 处理文章保存
-  const handleSavePost = () => {
-    if (!selectedPost) return;
+  const handleSavePost = async () => {
+    if (!selectedPost || !selectedPost.content) return;
     
-    setPosts(prev => prev.map(post => 
-      post.id === selectedPost.id 
-        ? { ...selectedPost, updatedAt: new Date().toISOString() }
-        : post
-    ));
-    setIsEditing(false);
+    try {
+      // 保存到服务
+      await PostsService.savePostContent(selectedPost.path, selectedPost.content);
+      
+      // 更新本地状态
+      const updatedPost = { ...selectedPost, updatedAt: new Date().toISOString() };
+      setPosts(prev => prev.map(post => 
+        post.id === selectedPost.id ? updatedPost : post
+      ));
+      setSelectedPost(updatedPost);
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error saving post:', error);
+      // 这里可以显示错误提示
+    }
   };
 
   // 处理创建新文章
-  const handleCreatePost = () => {
-    const newPost: PostItem = {
-      id: Date.now().toString(),
-      title: newPostTitle,
-      content: newPostContent,
-      category: newPostCategory,
-      tags: [],
-      status: 'draft',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      author: '当前用户',
-    };
-    
-    setPosts(prev => [...prev, newPost]);
-    setSelectedPost(newPost);
-    setShowCreateDialog(false);
-    setNewPostTitle('');
-    setNewPostContent('');
-    setNewPostCategory('');
-    setIsEditing(true);
+  const handleCreatePost = async () => {
+    try {
+      const newPost = await PostsService.createPost({
+        title: newPostTitle,
+        category: newPostCategory,
+        content: newPostContent,
+        tags: [],
+        status: 'draft',
+      });
+      
+      // 添加内容到新文章对象
+      const newPostWithContent = { ...newPost, content: newPostContent };
+      
+      setPosts(prev => [...prev, newPostWithContent]);
+      setSelectedPost(newPostWithContent);
+      setShowCreateDialog(false);
+      setNewPostTitle('');
+      setNewPostContent('');
+      setNewPostCategory('');
+      setIsEditing(true);
+    } catch (error) {
+      console.error('Error creating post:', error);
+    }
   };
 
   // 处理删除文章
-  const handleDeletePost = (postId: string) => {
+  const handleDeletePost = async (postId: string) => {
     if (window.confirm('确定要删除这篇文章吗？')) {
-      setPosts(prev => prev.filter(post => post.id !== postId));
-      if (selectedPost?.id === postId) {
-        setSelectedPost(null);
+      try {
+        await PostsService.deletePost(postId);
+        setPosts(prev => prev.filter(post => post.id !== postId));
+        if (selectedPost?.id === postId) {
+          setSelectedPost(null);
+        }
+      } catch (error) {
+        console.error('Error deleting post:', error);
       }
     }
   };
