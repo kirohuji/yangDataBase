@@ -61,7 +61,7 @@ const Home: React.FC = () => {
       title: '泛基因组分析平台',
       subtitle: '新功能上线',
       description: '全新的泛基因组分析工具现已上线，支持多基因组比较和变异检测。',
-      image: '/images/home/home1.jpg',
+      image: '/images/home1.PNG',
       action: {
         text: '开始分析',
         onClick: () => navigate('/tools'),
