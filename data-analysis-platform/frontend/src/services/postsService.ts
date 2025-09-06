@@ -1,4 +1,7 @@
 // 文章管理服务
+import { mockPostsIndex, mockPostContents } from '../mock/postsData';
+import { mockApiDelay } from '../mock';
+
 export interface PostMeta {
   id: string;
   title: string;
@@ -39,13 +42,12 @@ export class PostsService {
     }
 
     try {
-      const response = await fetch('/posts/index.json');
-      if (!response.ok) {
-        throw new Error('Failed to fetch posts index');
-      }
+      // 模拟API延迟
+      await mockApiDelay(300);
       
-      this.indexCache = await response.json();
-      return this.indexCache!;
+      // 使用mock数据
+      this.indexCache = mockPostsIndex;
+      return this.indexCache;
     } catch (error) {
       console.error('Error loading posts index:', error);
       // 返回默认的空索引
@@ -60,12 +62,16 @@ export class PostsService {
     }
 
     try {
-      const response = await fetch(path);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch post content: ${path}`);
-      }
+      // 模拟API延迟
+      await mockApiDelay(200);
       
-      const content = await response.text();
+      // 从path中提取文章ID
+      const pathParts = path.split('/');
+      const fileName = pathParts[pathParts.length - 1];
+      const postId = fileName.replace('.md', '');
+      
+      // 使用mock数据
+      const content = mockPostContents[postId] || '# 文章内容\n\n这是一篇示例文章的内容。';
       this.contentCache.set(path, content);
       return content;
     } catch (error) {
@@ -278,4 +284,5 @@ export class PostsService {
 }
 
 export default PostsService;
+
 

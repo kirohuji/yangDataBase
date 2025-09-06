@@ -11,7 +11,6 @@ import {
   Grid,
   SelectChangeEvent,
 } from '@mui/material';
-import { useTranslation } from 'react-i18next';
 
 interface CandidateLocusParams {
   variation?: string;
@@ -40,7 +39,6 @@ const CandidateLocusForm: React.FC<CandidateLocusFormProps> = ({
     traits: []
   }
 }) => {
-  const { t } = useTranslation();
   const [params, setParams] = useState<CandidateLocusParams>({});
 
   const handleChange = (field: keyof CandidateLocusParams) => (

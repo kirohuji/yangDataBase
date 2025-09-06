@@ -6,6 +6,12 @@ import type {
   PhenotypeSearchParams,
   PaginatedResponse 
 } from '@/types/api';
+import { 
+  mockPhenotypeData, 
+  mockTraitInfo, 
+  generateMockData
+} from '../mock/phenotypeData';
+import { mockApiDelay, createPaginatedResponse } from '../mock';
 
 // ============================================================================
 // 表型数据服务
@@ -16,27 +22,49 @@ export class PhenotypeService {
 
   // 获取表型数据列表
   static async getPhenotypes(params?: PhenotypeSearchParams): Promise<PaginatedResponse<PhenotypeData>> {
-    const searchParams = new URLSearchParams();
+    // 模拟API延迟
+    await mockApiDelay(400);
     
+    // 使用mock数据
+    let data = [...mockPhenotypeData, ...generateMockData(50)] as any[];
+    
+    // 应用筛选
     if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== '') {
-          if (Array.isArray(value)) {
-            value.forEach(v => searchParams.append(key, v.toString()));
-          } else {
-            searchParams.append(key, value.toString());
-          }
-        }
-      });
+      if (params.trait) {
+        data = data.filter(item => item.trait.includes(params.trait!));
+      }
+      if (params.accession) {
+        data = data.filter(item => item.accession.includes(params.accession!));
+      }
+      if (params.environment) {
+        data = data.filter(item => item.environment === params.environment);
+      }
+      if (params.year) {
+        data = data.filter(item => item.year === params.year);
+      }
     }
-
-    const url = `${this.BASE_URL}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
-    return await api.get<PaginatedResponse<PhenotypeData>>(url);
+    
+    // 分页
+    const page = params?.page || 1;
+    const pageSize = params?.pageSize || 20;
+    const total = data.length;
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedData = data.slice(startIndex, endIndex);
+    
+    return createPaginatedResponse(paginatedData, page, pageSize, total) as any;
   }
 
   // 根据ID获取表型数据
   static async getPhenotypeById(id: string): Promise<PhenotypeData> {
-    return await api.get<PhenotypeData>(`${this.BASE_URL}/${id}`);
+    await mockApiDelay(200);
+    
+    const data = mockPhenotypeData.find(item => item.id === id);
+    if (!data) {
+      throw new Error('表型数据不存在');
+    }
+    
+    return data as any;
   }
 
   // 创建表型数据
@@ -61,13 +89,22 @@ export class PhenotypeService {
 
   // 获取表型数据分类
   static async getCategories(): Promise<string[]> {
-    return await api.get<string[]>(`${this.BASE_URL}/categories`);
+    await mockApiDelay(150);
+    
+    const categories = [...new Set(mockTraitInfo.map(trait => trait.category))];
+    return categories;
   }
 
   // 获取表型特征列表
   static async getTraits(category?: string): Promise<string[]> {
-    const params = category ? `?category=${encodeURIComponent(category)}` : '';
-    return await api.get<string[]>(`${this.BASE_URL}/traits${params}`);
+    await mockApiDelay(150);
+    
+    let traits = mockTraitInfo;
+    if (category) {
+      traits = traits.filter(trait => trait.category === category);
+    }
+    
+    return traits.map(trait => trait.name);
   }
 
   // 搜索表型数据
@@ -101,11 +138,11 @@ export class PhenotypeService {
 
     const searchParams = new URLSearchParams(params);
     
-    const response = await api.get(`${this.BASE_URL}/export?${searchParams.toString()}`, {
-      responseType: 'blob'
-    });
+    await api.get(`${this.BASE_URL}/export?${searchParams.toString()}`);
+    // 模拟返回Blob数据
+    const blob = new Blob(['mock data'], { type: 'text/csv' });
 
-    return response as unknown as Blob;
+    return blob;
   }
 
   // 导入表型数据
@@ -117,11 +154,7 @@ export class PhenotypeService {
     const formData = new FormData();
     formData.append('file', file);
 
-    return await api.post(`${this.BASE_URL}/import`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    return await api.post(`${this.BASE_URL}/import`, formData);
   }
 
   // 获取表型数据统计信息

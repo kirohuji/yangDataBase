@@ -9,6 +9,13 @@ import type {
   ExecutionSearchParams,
   PaginatedResponse 
 } from '@/types/api';
+import { 
+  mockTools, 
+  mockToolCategories, 
+  mockToolResults, 
+  generateMockToolResults
+} from '../mock/toolsData';
+import { mockApiDelay, createPaginatedResponse } from '../mock';
 
 // ============================================================================
 // 分析工具服务
@@ -24,23 +31,49 @@ export class ToolService {
 
   // 获取工具列表
   static async getTools(params?: ToolSearchParams): Promise<PaginatedResponse<AnalysisTool>> {
-    const searchParams = new URLSearchParams();
+    await mockApiDelay(300);
     
+    let data = [...mockTools] as any[];
+    
+    // 应用筛选
     if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== '') {
-          searchParams.append(key, value.toString());
-        }
-      });
+      if (params.category) {
+        data = data.filter(tool => tool.category === params.category);
+      }
+      if (params.status) {
+        data = data.filter(tool => tool.status === params.status);
+      }
+      if (params.search) {
+        const searchTerm = params.search.toLowerCase();
+        data = data.filter(tool => 
+          tool.name.toLowerCase().includes(searchTerm) ||
+          tool.description.toLowerCase().includes(searchTerm) ||
+          tool.tags.some((tag: string) => tag.toLowerCase().includes(searchTerm))
+        );
+      }
     }
-
-    const url = `${this.BASE_URL}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
-    return await api.get<PaginatedResponse<AnalysisTool>>(url);
+    
+    // 分页
+    const page = params?.page || 1;
+    const pageSize = params?.pageSize || 20;
+    const total = data.length;
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedData = data.slice(startIndex, endIndex);
+    
+    return createPaginatedResponse(paginatedData, page, pageSize, total) as any;
   }
 
   // 根据ID获取工具
   static async getToolById(id: string): Promise<AnalysisTool> {
-    return await api.get<AnalysisTool>(`${this.BASE_URL}/${id}`);
+    await mockApiDelay(200);
+    
+    const tool = mockTools.find(t => t.id === id);
+    if (!tool) {
+      throw new Error('工具不存在');
+    }
+    
+    return tool as any;
   }
 
   // 创建工具
@@ -60,7 +93,9 @@ export class ToolService {
 
   // 获取工具分类
   static async getToolCategories(): Promise<string[]> {
-    return await api.get<string[]>(`${this.BASE_URL}/categories`);
+    await mockApiDelay(150);
+    
+    return mockToolCategories.map(cat => cat.id);
   }
 
   // 搜索工具
@@ -80,12 +115,19 @@ export class ToolService {
 
   // 获取推荐工具
   static async getRecommendedTools(limit: number = 5): Promise<AnalysisTool[]> {
-    return await api.get<AnalysisTool[]>(`${this.BASE_URL}/recommended?limit=${limit}`);
+    await mockApiDelay(200);
+    
+    // 返回前几个工具作为推荐
+    return mockTools.slice(0, limit) as any[];
   }
 
   // 获取热门工具
   static async getPopularTools(limit: number = 10): Promise<AnalysisTool[]> {
-    return await api.get<AnalysisTool[]>(`${this.BASE_URL}/popular?limit=${limit}`);
+    await mockApiDelay(200);
+    
+    // 返回活跃状态的工具
+    const activeTools = mockTools.filter(tool => tool.status === 'active');
+    return activeTools.slice(0, limit) as any[];
   }
 
   // ============================================================================
@@ -101,18 +143,29 @@ export class ToolService {
 
   // 获取执行历史
   static async getExecutions(params?: ExecutionSearchParams): Promise<PaginatedResponse<ScriptExecution>> {
-    const searchParams = new URLSearchParams();
+    await mockApiDelay(300);
     
+    let data = [...mockToolResults, ...generateMockToolResults(20)] as any[];
+    
+    // 应用筛选
     if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== '') {
-          searchParams.append(key, value.toString());
-        }
-      });
+      if (params.status) {
+        data = data.filter(execution => execution.status === params.status);
+      }
+      if (params.toolId) {
+        data = data.filter(execution => execution.toolId === params.toolId);
+      }
     }
-
-    const url = `${this.EXECUTIONS_URL}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
-    return await api.get<PaginatedResponse<ScriptExecution>>(url);
+    
+    // 分页
+    const page = params?.page || 1;
+    const pageSize = params?.pageSize || 20;
+    const total = data.length;
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedData = data.slice(startIndex, endIndex);
+    
+    return createPaginatedResponse(paginatedData, page, pageSize, total) as any;
   }
 
   // 根据ID获取执行详情
@@ -132,11 +185,10 @@ export class ToolService {
 
   // 下载执行结果
   static async downloadExecutionResult(id: string): Promise<Blob> {
-    const response = await api.get(`${this.EXECUTIONS_URL}/${id}/download`, {
-      responseType: 'blob'
-    });
-
-    return response as unknown as Blob;
+    await api.get(`${this.EXECUTIONS_URL}/${id}/download`);
+    // 模拟返回Blob数据
+    const blob = new Blob(['mock result data'], { type: 'application/octet-stream' });
+    return blob;
   }
 
   // 获取执行日志

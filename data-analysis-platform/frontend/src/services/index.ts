@@ -2,6 +2,12 @@
 // 服务模块统一导出
 // ============================================================================
 
+import api from './api';
+import AuthService from './authService';
+import FileService from './fileService';
+import PhenotypeService from './phenotypeService';
+import ToolService from './toolService';
+
 // API 基础配置
 export { apiClient, api, HttpMethod } from './api';
 export type { 

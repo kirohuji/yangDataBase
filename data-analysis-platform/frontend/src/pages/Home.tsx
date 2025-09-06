@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Box,
   Typography,
-  Button,
+  // Button,
   Grid,
   Card,
   CardContent,
@@ -21,15 +21,15 @@ import {
   Analytics as AnalyticsIcon,
   Visibility as VisibilityIcon,
   Groups as GroupsIcon,
-  ArrowForward as ArrowForwardIcon,
+  // ArrowForward as ArrowForwardIcon,
   Science as ScienceIcon,
   Build as BuildIcon,
   Download as DownloadIcon,
   School as SchoolIcon,
-  Work as WorkIcon,
+  // Work as WorkIcon,
   Email as EmailIcon,
   LocationOn as LocationIcon,
-  Phone as PhoneIcon,
+  // Phone as PhoneIcon,
   Language as WebsiteIcon,
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
@@ -45,30 +45,30 @@ const Home: React.FC = () => {
 
   // 轮播图数据
   const carouselItems: CarouselItem[] = [
+    // {
+    //   id: '1',
+    //   title: 'CLv4.0参考基因组发布',
+    //   subtitle: '重大更新',
+    //   description: '最新的CLv4.0参考基因组现已发布，包含更完整的注释信息和更高的组装质量。',
+    //   image: '/images/home/home1.jpg',
+    //   action: {
+    //     text: '立即下载',
+    //     onClick: () => navigate('/download'),
+    //   },
+    // },
     {
       id: '1',
-      title: 'CLv4.0参考基因组发布',
-      subtitle: '重大更新',
-      description: '最新的CLv4.0参考基因组现已发布，包含更完整的注释信息和更高的组装质量。',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=600&fit=crop',
-      action: {
-        text: '立即下载',
-        onClick: () => navigate('/download'),
-      },
-    },
-    {
-      id: '2',
       title: '泛基因组分析平台',
       subtitle: '新功能上线',
       description: '全新的泛基因组分析工具现已上线，支持多基因组比较和变异检测。',
-      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=1200&h=600&fit=crop',
+      image: '/images/home/home1.jpg',
       action: {
         text: '开始分析',
         onClick: () => navigate('/tools'),
       },
     },
     {
-      id: '3',
+      id: '2',
       title: '表型数据库扩容',
       subtitle: '数据更新',
       description: '新增2024年度表型测量数据，覆盖更多品种和环境条件。',

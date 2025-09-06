@@ -55,7 +55,7 @@ export const useCurrentUser = (enabled: boolean = true) => {
 export const useLogin = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { addNotification, setLanguage } = useAppStore();
+  const { addNotification } = useAppStore();
 
   return useMutation({
     mutationFn: (credentials: LoginRequest) => AuthService.login(credentials),
@@ -142,7 +142,7 @@ export const useLogout = () => {
       // 跳转到登录页
       navigate('/login', { replace: true });
     },
-    onError: (error: any) => {
+    onError: () => {
       // 即使登出API失败，也要清除本地状态
       queryClient.clear();
       
@@ -174,7 +174,7 @@ export const useRefreshToken = () => {
         message: 'Your session has been refreshed successfully.',
       });
     },
-    onError: (error: any) => {
+    onError: () => {
       // 刷新失败，清除认证信息
       AuthService.clearAuth();
       queryClient.clear();
@@ -310,7 +310,7 @@ export const useUserRole = () => {
 
 // 检查用户权限
 export const useHasPermission = (requiredRole: string) => {
-  const userRole = useUserRole();
+  // const userRole = useUserRole();
   return AuthService.hasPermission(requiredRole);
 };
 

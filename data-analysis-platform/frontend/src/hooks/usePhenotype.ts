@@ -2,7 +2,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PhenotypeService } from '@/services/phenotypeService';
 import { useAppStore } from '@/stores/useAppStore';
 import type { 
-  PhenotypeData, 
   CreatePhenotypeRequest, 
   UpdatePhenotypeRequest, 
   PhenotypeSearchParams 

@@ -2,11 +2,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ToolService } from '@/services/toolService';
 import { useAppStore } from '@/stores/useAppStore';
 import type { 
-  AnalysisTool, 
   CreateToolRequest, 
   UpdateToolRequest, 
   ToolSearchParams,
-  ScriptExecution,
   ExecuteScriptRequest,
   ExecutionSearchParams
 } from '@/types/api';
@@ -285,7 +283,7 @@ export const useExecuteScript = () => {
 
   return useMutation({
     mutationFn: (data: ExecuteScriptRequest) => ToolService.executeScript(data),
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: EXECUTION_QUERY_KEYS.lists() });
       
       addNotification({

@@ -13,8 +13,20 @@ export interface BaseEntity {
 export interface PaginationParams {
   page?: number;
   limit?: number;
+  pageSize?: number;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
+}
+
+// 分页响应
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
 }
 
 // 搜索参数
@@ -86,6 +98,10 @@ export interface UpdatePhenotypeRequest extends Partial<CreatePhenotypeRequest> 
 export interface PhenotypeSearchParams extends SearchParams {
   category?: string;
   traits?: string[];
+  trait?: string;
+  accession?: string;
+  environment?: string;
+  year?: number;
   minSamples?: number;
   maxSamples?: number;
 }
@@ -140,6 +156,7 @@ export interface ToolSearchParams extends SearchParams {
   category?: string;
   status?: string;
   complexity?: string;
+  search?: string;
 }
 
 // ============================================================================
@@ -173,6 +190,7 @@ export interface ExecuteScriptRequest {
 export interface ExecutionSearchParams extends SearchParams {
   status?: string;
   scriptId?: string;
+  toolId?: string;
   userId?: string;
   startDate?: string;
   endDate?: string;

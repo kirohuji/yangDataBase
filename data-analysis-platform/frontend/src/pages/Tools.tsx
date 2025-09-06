@@ -8,8 +8,8 @@ import {
   CardActions,
   Button,
   Chip,
-  useTheme,
-  useMediaQuery,
+  // useTheme,
+  // useMediaQuery,
 } from '@mui/material';
 import {
   Build as BuildIcon,
@@ -25,8 +25,8 @@ import { useTranslation } from 'react-i18next';
 
 const Tools: React.FC = () => {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  // const theme = useTheme();
+  // const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const toolCategories = [
     {

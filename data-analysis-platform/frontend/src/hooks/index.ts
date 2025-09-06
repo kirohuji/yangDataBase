@@ -138,7 +138,7 @@ export const useBatchOperations = () => {
       const results = await Promise.allSettled(operations.map(op => op()));
       
       const successful = results
-        .filter((result): result is PromiseFulfilledResult<T> => result.status === 'fulfilled')
+        .filter((result): result is PromiseFulfilledResult<Awaited<T>> => result.status === 'fulfilled')
         .map(result => result.value);
       
       const failed = results

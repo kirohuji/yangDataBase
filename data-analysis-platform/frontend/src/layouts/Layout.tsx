@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { Box, Container, useTheme, useMediaQuery } from '@mui/material';
+import { Box, Container } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import MobileDrawer from '@/components/layout/MobileDrawer';
-import { useAppStore } from '@/stores/useAppStore';
+// import { useAppStore } from '@/stores/useAppStore';
 
 const Layout: React.FC = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  // const theme = useTheme();
+  // const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleMobileMenuOpen = () => {

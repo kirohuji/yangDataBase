@@ -4,7 +4,7 @@ import {
   Typography,
   Paper,
   List,
-  ListItem,
+  // ListItem,
   ListItemText,
   ListItemIcon,
   ListItemButton,
@@ -18,15 +18,15 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem,
+  // MenuItem,
   Chip,
   Divider,
   Breadcrumbs,
   Link,
-  Fab,
-  Tooltip,
+  // Fab,
+  // Tooltip,
   Menu,
-  MenuList,
+  // MenuList,
   MenuItem as MenuItemComponent,
   useTheme,
   useMediaQuery,
@@ -41,9 +41,9 @@ import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
-  MoreVert as MoreIcon,
+  // MoreVert as MoreIcon,
   Save as SaveIcon,
-  Preview as PreviewIcon,
+  // Preview as PreviewIcon,
   Menu as MenuIcon,
   Close as CloseIcon,
   NavigateNext as NavigateNextIcon,
@@ -64,9 +64,7 @@ const PostsManagement: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [isEditing, setIsEditing] = useState(false);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [showCategoryDialog, setShowCategoryDialog] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [contextMenu, setContextMenu] = useState<{
     mouseX: number;
     mouseY: number;
@@ -78,8 +76,8 @@ const PostsManagement: React.FC = () => {
   const [newPostTitle, setNewPostTitle] = useState('');
   const [newPostCategory, setNewPostCategory] = useState('');
   const [newPostContent, setNewPostContent] = useState('');
-  const [newCategoryName, setNewCategoryName] = useState('');
-  const [newCategoryParent, setNewCategoryParent] = useState('');
+  // const [newCategoryName] = useState('');
+  // const [newCategoryParent] = useState('');
 
   // 数据状态
   const [categories, setCategories] = useState<CategoryItem[]>([]);
@@ -89,7 +87,6 @@ const PostsManagement: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        setLoading(true);
         const [categoriesData, postsData] = await Promise.all([
           PostsService.getCategories(),
           PostsService.getAllPosts()
@@ -99,8 +96,6 @@ const PostsManagement: React.FC = () => {
         setPosts(postsData);
       } catch (error) {
         console.error('Error loading data:', error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -355,7 +350,7 @@ const PostsManagement: React.FC = () => {
           startIcon={<AddIcon />}
           fullWidth
           size="small"
-          onClick={() => setShowCategoryDialog(true)}
+          onClick={() => {}}
         >
           新建分类
         </Button>
@@ -497,7 +492,7 @@ const PostsManagement: React.FC = () => {
             <Box sx={{ flex: 1, overflow: 'hidden' }}>
               {isEditing ? (
                 <MarkdownEditor
-                  value={selectedPost.content}
+                  value={selectedPost.content || ''}
                   onChange={(content) => setSelectedPost({ ...selectedPost, content })}
                   onSave={handleSavePost}
                   height="100%"
@@ -541,7 +536,7 @@ const PostsManagement: React.FC = () => {
                     '& li': { mb: 0.5 },
                   }}
                   dangerouslySetInnerHTML={{
-                    __html: selectedPost.content
+                    __html: selectedPost.content || ''
                       .replace(/^### (.*$)/gm, '<h3>$1</h3>')
                       .replace(/^## (.*$)/gm, '<h2>$1</h2>')
                       .replace(/^# (.*$)/gm, '<h1>$1</h1>')
