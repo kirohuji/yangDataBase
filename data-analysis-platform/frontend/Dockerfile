@@ -12,8 +12,6 @@ RUN yarn
 # Copy the rest of the application code
 COPY . .
 
-RUN sed -i 's#"main": "dist/plugin.cjs.js"#"main": "dist/esm/index.js"#' /app/node_modules/@revenuecat/purchases-capacitor/package.json
-
 RUN yarn build
 
 # production environment
